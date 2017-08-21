@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 // (2) Plug the numbers in order: HORIZONTAL_FOV, strength, cylindricalRatio
 const HORIZONTAL_FOV = 140;
 const STRENGTH = 0.5;//1;
-const CYLINDRICAL_RATIO = 2;//0.25;
+const CYLINDRICAL_RATIO = 0.25;//0.25;
 
 const GRID_SPACING = 150;
 const GRID_DEPTH = 150;
@@ -49,24 +49,24 @@ class ThreeRenderer {
     this.camera.lookAt(new THREE.Vector3(0,0,0));
     this.camera.up = new THREE.Vector3(0,0,-1);
 
-    // // Create effect composer
-    // let composer = new THREE.EffectComposer(this.renderer);
-    // composer.addPass(new THREE.RenderPass(this.scene, this.camera) );
+    // Create effect composer
+    let composer = new THREE.EffectComposer(this.renderer);
+    composer.addPass(new THREE.RenderPass(this.scene, this.camera) );
 
-    // let effect = new THREE.ShaderPass(getDistortionShaderDefinition());
-    // composer.addPass(effect);
-    // effect.renderToScreen = true;
+    let effect = new THREE.ShaderPass(getDistortionShaderDefinition());
+    composer.addPass(effect);
+    effect.renderToScreen = true;
 
-    // // Setup distortion effect
-    // var height = Math.tan(THREE.Math.degToRad(HORIZONTAL_FOV) / 2) / this.camera.aspect;
+    // Setup distortion effect
+    var height = Math.tan(THREE.Math.degToRad(HORIZONTAL_FOV) / 2) / this.camera.aspect;
 
-    // this.camera.fov = Math.atan(height) * 2 * 180 / 3.1415926535;
-    // this.camera.updateProjectionMatrix();
+    this.camera.fov = Math.atan(height) * 2 * 180 / 3.1415926535;
+    this.camera.updateProjectionMatrix();
 
-    // effect.uniforms["strength"].value = STRENGTH;
-    // effect.uniforms["height"].value = height;
-    // effect.uniforms["aspectRatio"].value = this.camera.aspect;
-    // effect.uniforms["cylindricalRatio"].value = CYLINDRICAL_RATIO;
+    effect.uniforms["strength"].value = STRENGTH;
+    effect.uniforms["height"].value = height;
+    effect.uniforms["aspectRatio"].value = this.camera.aspect;
+    effect.uniforms["cylindricalRatio"].value = CYLINDRICAL_RATIO;
 
     // Set the background color of the this.scene.
     this.renderer.setClearColor(0x333F47, 1);
