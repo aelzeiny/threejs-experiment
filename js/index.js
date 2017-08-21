@@ -3,10 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("INDEX LOCKED AND LOADED");
   
   // Create the render window here
-  // Hey Cyril, to increase the fisheye effect:
-  // (1) Go to this demo page: http://www.decarpentier.nl/downloads/lensdistortion-webgl/lensdistortion-webgl.html
-  // (2) Plug the numbers in order: horizontalFOV, strength, cylindricalRatio
-  const threes = new ThreeRenderer(140, 1, 0.25);
+  const threes = new ThreeRenderer();
   
   window.addEventListener('resize', function() { 
     threes.resize(window.innerWidth, window.innerHeight)
@@ -16,16 +13,28 @@ document.addEventListener("DOMContentLoaded", function() {
   threes.animate();
 });
 
+// Hey Cyril, to increase the fisheye effect:
+// (1) Go to this demo page: http://www.decarpentier.nl/downloads/lensdistortion-webgl/lensdistortion-webgl.html
+// (2) Plug the numbers in order: HORIZONTAL_FOV, strength, cylindricalRatio
+const HORIZONTAL_FOV = 140;
+const STRENGTH = 0.5;//1;
+const CYLINDRICAL_RATIO = 2;//0.25;
+
+const GRID_SPACING = 100;
+const CAMERA_DISTANCE = 1000; // camera distance from axis
+const FAR = 1000000; // furthest cross layer
+const LAYERS = 3; // number of cross layers
+
 // This class is responsible for rendering everything
 // FishEYE Source: https://stackoverflow.com/questions/13360625/
 class ThreeRenderer {
-  constructor(horizontalFOV, strength, cylindricalRatio) {
+  constructor() {
     // bind animate function so that it can call itself
     this.animate = this.animate.bind(this);
 
     this.scene = new THREE.Scene();
-    var WIDTH = window.innerWidth,
-        HEIGHT = window.innerHeight;
+    var WIDTH = window.innerWidth - 10,
+        HEIGHT = window.innerHeight - 50;
 
     // Create a this.renderer and add it to the DOM.
     this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -33,9 +42,11 @@ class ThreeRenderer {
     document.body.appendChild(this.renderer.domElement);
 
     // Create a this.camera, zoom it out from the model a bit, and add it to the this.scene.
-    this.camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000000 );
-    this.camera.position.z = 30;
-    this.camera.position.y = 30;
+    this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, FAR );
+        
+    this.camera.position.set(0, CAMERA_DISTANCE, 0);
+    this.camera.up = new THREE.Vector3(0,0,-1);
+    this.camera.lookAt(new THREE.Vector3(0,0,0));
 
     console.log(this.renderer);
 
@@ -48,15 +59,15 @@ class ThreeRenderer {
     effect.renderToScreen = true;
 
     // Setup distortion effect
-    var height = Math.tan(THREE.Math.degToRad(horizontalFOV) / 2) / this.camera.aspect;
+    var height = Math.tan(THREE.Math.degToRad(HORIZONTAL_FOV) / 2) / this.camera.aspect;
 
     this.camera.fov = Math.atan(height) * 2 * 180 / 3.1415926535;
     this.camera.updateProjectionMatrix();
 
-    effect.uniforms["strength"].value = strength;
+    effect.uniforms["strength"].value = STRENGTH;
     effect.uniforms["height"].value = height;
     effect.uniforms["aspectRatio"].value = this.camera.aspect;
-    effect.uniforms["cylindricalRatio"].value = cylindricalRatio;
+    effect.uniforms["cylindricalRatio"].value = CYLINDRICAL_RATIO;
 
     // Set the background color of the this.scene.
     this.renderer.setClearColor(0x333F47, 1);
@@ -71,16 +82,29 @@ class ThreeRenderer {
     // this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
+    
+    let material = new THREE.MeshLambertMaterial({color: 0x999999});
     var loader = new THREE.JSONLoader();
     loader.load( "models/plus_v3.js", (geometry) => {
-      var material = new THREE.MeshLambertMaterial({color: 0x999999});
-      let mesh = new THREE.Mesh(geometry, material);
-      this.scene.add(mesh);
+        this.loadArrows(geometry, material);
     });
-
+    
     // Add OrbitControls so that we can pan around with the mouse.
     this.scene.add(this.camera);
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+  }
+
+  loadArrows(geometry, material) {
+    var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians
+    var height = 2 * Math.tan( vFOV / 2 ) * dist; // visible height
+    for(let x=0;x<10;x++) {
+        for(let z=0;z<10;z++) {
+            let mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(x * GRID_SPACING, 0 , z * GRID_SPACING);
+            mesh.add(new THREE.AxisHelper(10));
+            this.scene.add(mesh);
+        }
+    }
   }
 
   resize(width, height) {
@@ -100,6 +124,9 @@ class ThreeRenderer {
   }
 }
 
+
+// Just a distorition shader for the fisheye effect.
+// FishEYE Source: https://stackoverflow.com/questions/13360625/
 function getDistortionShaderDefinition() {
     return {
 
