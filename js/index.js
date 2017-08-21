@@ -20,9 +20,9 @@ const HORIZONTAL_FOV = 140;
 const STRENGTH = 0.5;//1;
 const CYLINDRICAL_RATIO = 2;//0.25;
 
-const GRID_SPACING = 50;
-const GRID_DEPTH = 50;
-const CAMERA_DISTANCE = 100; // camera distance from axis
+const GRID_SPACING = 100;
+const GRID_DEPTH = 100;
+const CAMERA_DISTANCE = 200; // camera distance from axis
 const LAYERS = 3; // number of cross layers
 
 // This class is responsible for rendering everything
@@ -73,19 +73,19 @@ class ThreeRenderer {
     this.renderer.setClearColor(0x333F47, 1);
 
     // Create a light, set its position, and add it to the this.scene.
-    var light = new THREE.PointLight(0xffffff);
-    light.position.set(WIDTH / 2, CAMERA_DISTANCE, HEIGHT / 2);
-    this.scene.add(light);
+    // var light = new THREE.PointLight(0xffffff);
+    // light.position.set(WIDTH / 2, CAMERA_DISTANCE, HEIGHT / 2);
+    // this.scene.add(light);
 
-    // var ambiColor = "#999999";
-    // var ambientLight = new THREE.AmbientLight(ambiColor);
-    // this.scene.add(ambientLight);
+    var ambiColor = "#999999";
+    var ambientLight = new THREE.AmbientLight(ambiColor);
+    this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
     var loader = new THREE.JSONLoader();
     loader.load( "models/plus_v3.js", (geometry) => {
-        this.loadArrows(geometry, material);
+        this.loadMeshes(geometry, material);
     });
     
     // Add OrbitControls so that we can pan around with the mouse.
@@ -93,21 +93,22 @@ class ThreeRenderer {
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
   } 
 
-  loadArrows(geometry, material) {
+  loadMeshes(geometry, material) {
+    this.meshes = [];
     for(let l = 0; l < LAYERS; l++) {
         const dist = l * GRID_DEPTH;
         const vFOV = this.camera.fov * Math.PI / 180;
-        let height = 2 * Math.tan( vFOV / 2 ) * (dist + CAMERA_DISTANCE);
-        let width = this.camera.aspect * height;
-        height = Math.ceil(height / 2 / GRID_SPACING) * GRID_SPACING * 2;
-        width = Math.ceil(width / 2 / GRID_SPACING) * GRID_SPACING * 2;
-        console.log(width, height);
-        console.log(width, height);
-        for(let x = -width / 2; x<=width / 2; x += GRID_SPACING) {
+        const boundedHeight = 2 * Math.tan( vFOV / 2 ) * (dist + CAMERA_DISTANCE);
+        const boundedWidth = this.camera.aspect * height;
+        let height = Math.ceil(boundedHeight / 2 / GRID_SPACING) * GRID_SPACING * 2;
+        let width = Math.ceil(boundedWidth / 2 / GRID_SPACING) * GRID_SPACING * 2;
+        for(let x = -width / 2; x<= width / 2; x += GRID_SPACING) {
             for(let z = -height / 2; z <= height / 2; z += GRID_SPACING) {
                 let mesh = new THREE.Mesh(geometry, material);
                 mesh.position.set(x, -dist, z);
+                mesh.bounds = [boundedWidth, boundedHeight];
                 // mesh.add(new THREE.AxisHelper(10));
+                this.meshes.push(mesh);
                 this.scene.add(mesh);
             }
         }
@@ -124,6 +125,12 @@ class ThreeRenderer {
   // Renders the this.scene and updates the render as needed.
   animate() {
     requestAnimationFrame(this.animate);
+
+    // Move all the meshes
+    for(let i = 0; i < this.meshes.length; i++) {
+        let mesh = this.meshes[i];
+        
+    }
     
     // Render the this.scene.
     this.renderer.render(this.scene, this.camera);
