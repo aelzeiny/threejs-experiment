@@ -21,9 +21,10 @@ const STRENGTH = 0.5;//1;
 const CYLINDRICAL_RATIO = 2;//0.25;
 
 const GRID_SPACING = 100;
-const GRID_DEPTH = 100;
+const GRID_DEPTH = 200;
 const CAMERA_DISTANCE = 200; // camera distance from axis
 const LAYERS = 3; // number of cross layers
+const VELO = 5; // Pixel movement per frame
 
 // This class is responsible for rendering everything
 // FishEYE Source: https://stackoverflow.com/questions/13360625/
@@ -45,8 +46,8 @@ class ThreeRenderer {
     this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, 1000000);
         
     this.camera.position.set(0, CAMERA_DISTANCE, 0);
-    this.camera.up = new THREE.Vector3(0,0,-1);
     this.camera.lookAt(new THREE.Vector3(0,0,0));
+    this.camera.up = new THREE.Vector3(0,0,-1);
 
     console.log(this.renderer);
 
@@ -99,14 +100,14 @@ class ThreeRenderer {
         const dist = l * GRID_DEPTH;
         const vFOV = this.camera.fov * Math.PI / 180;
         const boundedHeight = 2 * Math.tan( vFOV / 2 ) * (dist + CAMERA_DISTANCE);
-        const boundedWidth = this.camera.aspect * height;
+        const boundedWidth = this.camera.aspect * boundedHeight;
         let height = Math.ceil(boundedHeight / 2 / GRID_SPACING) * GRID_SPACING * 2;
         let width = Math.ceil(boundedWidth / 2 / GRID_SPACING) * GRID_SPACING * 2;
         for(let x = -width / 2; x<= width / 2; x += GRID_SPACING) {
             for(let z = -height / 2; z <= height / 2; z += GRID_SPACING) {
                 let mesh = new THREE.Mesh(geometry, material);
                 mesh.position.set(x, -dist, z);
-                mesh.bounds = [boundedWidth, boundedHeight];
+                mesh.dist = dist;
                 // mesh.add(new THREE.AxisHelper(10));
                 this.meshes.push(mesh);
                 this.scene.add(mesh);
@@ -127,9 +128,19 @@ class ThreeRenderer {
     requestAnimationFrame(this.animate);
 
     // Move all the meshes
-    for(let i = 0; i < this.meshes.length; i++) {
-        let mesh = this.meshes[i];
-        
+    const vFOV = this.camera.fov * Math.PI / 180;
+    if(this.meshes) {
+        for(let i = 0; i < this.meshes.length; i++) {
+            let mesh = this.meshes[i];
+            
+            const boundedHeight = 2 * Math.tan( vFOV / 2 ) * (mesh.dist + CAMERA_DISTANCE);
+            const boundedWidth = (this.camera.aspect * boundedHeight) / 2;
+            let width = Math.ceil(boundedWidth / 2 / GRID_SPACING) * GRID_SPACING * 2;
+            let newX = mesh.position.x + VELO;
+            if(newX > width)
+                newX -= width * 2;
+            mesh.position.set(newX, mesh.position.y, mesh.position.z);
+        }
     }
     
     // Render the this.scene.
