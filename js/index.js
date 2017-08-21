@@ -33,7 +33,7 @@ class ThreeRenderer {
     document.body.appendChild(this.renderer.domElement);
 
     // Create a this.camera, zoom it out from the model a bit, and add it to the this.scene.
-    this.camera = new THREE.PerspectiveCamera/*(45, WIDTH / HEIGHT, 0.1, 20000);*/( 100, window.innerWidth / window.innerHeight, 1, 1000000 );
+    this.camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000000 );
     this.camera.position.z = 30;
     this.camera.position.y = 30;
 
@@ -66,9 +66,13 @@ class ThreeRenderer {
     light.position.set(-100,200,100);
     this.scene.add(light);
 
+    // var ambiColor = "#999999";
+    // var ambientLight = new THREE.AmbientLight(ambiColor);
+    // this.scene.add(ambientLight);
+
     // Load in the mesh and add it to the this.scene.
     var loader = new THREE.JSONLoader();
-    loader.load( "models/m4.js", (geometry) => {
+    loader.load( "models/plus_v3.js", (geometry) => {
       var material = new THREE.MeshLambertMaterial({color: 0x999999});
       let mesh = new THREE.Mesh(geometry, material);
       this.scene.add(mesh);
