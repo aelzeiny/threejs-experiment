@@ -20,6 +20,8 @@ const HORIZONTAL_FOV = 140;
 const STRENGTH = 0.5;//1;
 const CYLINDRICAL_RATIO = 0.25;//0.25;
 
+const BACKGROUND = 0x0a0a0a;
+
 const GRID_SPACING = 150;
 const GRID_DEPTH = 150;
 const CAMERA_DISTANCE = 200; // camera distance from axis
@@ -40,10 +42,10 @@ class ThreeRenderer {
     // Create a this.renderer and add it to the DOM.
     this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize(WIDTH, HEIGHT);
-    document.body.appendChild(this.renderer.domElement);
+    document.getElementById("viewport").appendChild(this.renderer.domElement);
 
     // Create a this.camera, zoom it out from the model a bit, and add it to the this.scene.
-    this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, 1000000);
+    this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, CAMERA_DISTANCE + GRID_DEPTH + 1000);
         
     this.camera.position.set(0, CAMERA_DISTANCE, 0);
     this.camera.lookAt(new THREE.Vector3(0,0,0));
@@ -69,7 +71,7 @@ class ThreeRenderer {
     effect.uniforms["cylindricalRatio"].value = CYLINDRICAL_RATIO;
 
     // Set the background color of the this.scene.
-    this.renderer.setClearColor(0x333F47, 1);
+    this.renderer.setClearColor(BACKGROUND, 1);
 
     // Create a light, set its position, and add it to the this.scene.
     var light = new THREE.PointLight(0xffffff);
