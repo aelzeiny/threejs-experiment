@@ -24,7 +24,7 @@ const GRID_SPACING = 100;
 const GRID_DEPTH = 200;
 const CAMERA_DISTANCE = 200; // camera distance from axis
 const LAYERS = 3; // number of cross layers
-const VELO = 5; // Pixel movement per frame
+const VELO = -1; // Pixel movement per frame
 
 // This class is responsible for rendering everything
 // FishEYE Source: https://stackoverflow.com/questions/13360625/
@@ -49,8 +49,6 @@ class ThreeRenderer {
     this.camera.lookAt(new THREE.Vector3(0,0,0));
     this.camera.up = new THREE.Vector3(0,0,-1);
 
-    console.log(this.renderer);
-
     // // Create effect composer
     // let composer = new THREE.EffectComposer(this.renderer);
     // composer.addPass(new THREE.RenderPass(this.scene, this.camera) );
@@ -74,13 +72,13 @@ class ThreeRenderer {
     this.renderer.setClearColor(0x333F47, 1);
 
     // Create a light, set its position, and add it to the this.scene.
-    // var light = new THREE.PointLight(0xffffff);
-    // light.position.set(WIDTH / 2, CAMERA_DISTANCE, HEIGHT / 2);
-    // this.scene.add(light);
+    var light = new THREE.PointLight(0x999999);
+    light.position.set(0, CAMERA_DISTANCE, 0);
+    this.scene.add(light);
 
-    var ambiColor = "#999999";
-    var ambientLight = new THREE.AmbientLight(ambiColor);
-    this.scene.add(ambientLight);
+    // var ambiColor = "#999999";
+    // var ambientLight = new THREE.AmbientLight(ambiColor);
+    // this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
