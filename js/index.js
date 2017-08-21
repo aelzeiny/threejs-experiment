@@ -20,11 +20,11 @@ const HORIZONTAL_FOV = 140;
 const STRENGTH = 0.5;//1;
 const CYLINDRICAL_RATIO = 2;//0.25;
 
-const GRID_SPACING = 100;
-const GRID_DEPTH = 200;
+const GRID_SPACING = 150;
+const GRID_DEPTH = 150;
 const CAMERA_DISTANCE = 200; // camera distance from axis
 const LAYERS = 3; // number of cross layers
-const VELO = -1; // Pixel movement per frame
+const VELO = -2; // Pixel movement per frame
 
 // This class is responsible for rendering everything
 // FishEYE Source: https://stackoverflow.com/questions/13360625/
@@ -72,13 +72,13 @@ class ThreeRenderer {
     this.renderer.setClearColor(0x333F47, 1);
 
     // Create a light, set its position, and add it to the this.scene.
-    var light = new THREE.PointLight(0x999999);
-    light.position.set(0, CAMERA_DISTANCE, 0);
-    this.scene.add(light);
+    // var light = new THREE.PointLight(0x999999);
+    // light.position.set(0, CAMERA_DISTANCE, 0);
+    // this.scene.add(light);
 
-    // var ambiColor = "#999999";
-    // var ambientLight = new THREE.AmbientLight(ambiColor);
-    // this.scene.add(ambientLight);
+    var ambiColor = "#999999";
+    var ambientLight = new THREE.AmbientLight(ambiColor);
+    this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
@@ -101,10 +101,10 @@ class ThreeRenderer {
         const boundedWidth = this.camera.aspect * boundedHeight;
         let height = Math.ceil(boundedHeight / 2 / GRID_SPACING) * GRID_SPACING * 2;
         let width = Math.ceil(boundedWidth / 2 / GRID_SPACING) * GRID_SPACING * 2;
-        for(let x = -width / 2; x<= width / 2; x += GRID_SPACING) {
-            for(let z = -height / 2; z <= height / 2; z += GRID_SPACING) {
+        for(let x = -width / 2; x<= width / 2 + GRID_SPACING; x += GRID_SPACING) {
+            for(let z = -height / 2; z <= height / 2 + GRID_SPACING; z += GRID_SPACING) {
                 let mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(x, -dist, z);
+                mesh.position.set(x, -dist, z + GRID_SPACING / 2);
                 mesh.dist = dist;
                 // mesh.add(new THREE.AxisHelper(10));
                 this.meshes.push(mesh);
@@ -135,8 +135,10 @@ class ThreeRenderer {
             const boundedWidth = (this.camera.aspect * boundedHeight) / 2;
             let width = Math.ceil(boundedWidth / 2 / GRID_SPACING) * GRID_SPACING * 2;
             let newX = mesh.position.x + VELO;
-            if(newX > width)
+            if(VELO > 0 && newX > width)
                 newX -= width * 2;
+            else if(VELO < 0 && newX < -width)
+                newX += width * 2;
             mesh.position.set(newX, mesh.position.y, mesh.position.z);
         }
     }
