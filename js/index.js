@@ -72,13 +72,13 @@ class ThreeRenderer {
     this.renderer.setClearColor(0x333F47, 1);
 
     // Create a light, set its position, and add it to the this.scene.
-    // var light = new THREE.PointLight(0x999999);
-    // light.position.set(0, CAMERA_DISTANCE, 0);
-    // this.scene.add(light);
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(0, CAMERA_DISTANCE, 0);
+    this.scene.add(light);
 
-    var ambiColor = "#999999";
-    var ambientLight = new THREE.AmbientLight(ambiColor);
-    this.scene.add(ambientLight);
+    // var ambiColor = "#000";
+    // var ambientLight = new THREE.AmbientLight(ambiColor);
+    // this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
