@@ -20,9 +20,9 @@ const HORIZONTAL_FOV = 140;
 const STRENGTH = 0.5;//1;
 const CYLINDRICAL_RATIO = 2;//0.25;
 
-const GRID_SPACING = 100;
-const CAMERA_DISTANCE = 1000; // camera distance from axis
-const FAR = 1000000; // furthest cross layer
+const GRID_SPACING = 50;
+const GRID_DEPTH = 50;
+const CAMERA_DISTANCE = 100; // camera distance from axis
 const LAYERS = 3; // number of cross layers
 
 // This class is responsible for rendering everything
@@ -42,7 +42,7 @@ class ThreeRenderer {
     document.body.appendChild(this.renderer.domElement);
 
     // Create a this.camera, zoom it out from the model a bit, and add it to the this.scene.
-    this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, FAR );
+    this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, 1000000);
         
     this.camera.position.set(0, CAMERA_DISTANCE, 0);
     this.camera.up = new THREE.Vector3(0,0,-1);
@@ -50,31 +50,31 @@ class ThreeRenderer {
 
     console.log(this.renderer);
 
-    // Create effect composer
-    let composer = new THREE.EffectComposer(this.renderer);
-    composer.addPass(new THREE.RenderPass(this.scene, this.camera) );
+    // // Create effect composer
+    // let composer = new THREE.EffectComposer(this.renderer);
+    // composer.addPass(new THREE.RenderPass(this.scene, this.camera) );
 
-    let effect = new THREE.ShaderPass(getDistortionShaderDefinition());
-    composer.addPass(effect);
-    effect.renderToScreen = true;
+    // let effect = new THREE.ShaderPass(getDistortionShaderDefinition());
+    // composer.addPass(effect);
+    // effect.renderToScreen = true;
 
-    // Setup distortion effect
-    var height = Math.tan(THREE.Math.degToRad(HORIZONTAL_FOV) / 2) / this.camera.aspect;
+    // // Setup distortion effect
+    // var height = Math.tan(THREE.Math.degToRad(HORIZONTAL_FOV) / 2) / this.camera.aspect;
 
-    this.camera.fov = Math.atan(height) * 2 * 180 / 3.1415926535;
-    this.camera.updateProjectionMatrix();
+    // this.camera.fov = Math.atan(height) * 2 * 180 / 3.1415926535;
+    // this.camera.updateProjectionMatrix();
 
-    effect.uniforms["strength"].value = STRENGTH;
-    effect.uniforms["height"].value = height;
-    effect.uniforms["aspectRatio"].value = this.camera.aspect;
-    effect.uniforms["cylindricalRatio"].value = CYLINDRICAL_RATIO;
+    // effect.uniforms["strength"].value = STRENGTH;
+    // effect.uniforms["height"].value = height;
+    // effect.uniforms["aspectRatio"].value = this.camera.aspect;
+    // effect.uniforms["cylindricalRatio"].value = CYLINDRICAL_RATIO;
 
     // Set the background color of the this.scene.
     this.renderer.setClearColor(0x333F47, 1);
 
     // Create a light, set its position, and add it to the this.scene.
     var light = new THREE.PointLight(0xffffff);
-    light.position.set(-100,200,100);
+    light.position.set(WIDTH / 2, CAMERA_DISTANCE, HEIGHT / 2);
     this.scene.add(light);
 
     // var ambiColor = "#999999";
@@ -82,7 +82,6 @@ class ThreeRenderer {
     // this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
-    
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
     var loader = new THREE.JSONLoader();
     loader.load( "models/plus_v3.js", (geometry) => {
@@ -92,17 +91,25 @@ class ThreeRenderer {
     // Add OrbitControls so that we can pan around with the mouse.
     this.scene.add(this.camera);
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-  }
+  } 
 
   loadArrows(geometry, material) {
-    var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians
-    var height = 2 * Math.tan( vFOV / 2 ) * dist; // visible height
-    for(let x=0;x<10;x++) {
-        for(let z=0;z<10;z++) {
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(x * GRID_SPACING, 0 , z * GRID_SPACING);
-            mesh.add(new THREE.AxisHelper(10));
-            this.scene.add(mesh);
+    for(let l = 0; l < LAYERS; l++) {
+        const dist = l * GRID_DEPTH;
+        const vFOV = this.camera.fov * Math.PI / 180;
+        let height = 2 * Math.tan( vFOV / 2 ) * (dist + CAMERA_DISTANCE);
+        let width = this.camera.aspect * height;
+        height = Math.ceil(height / 2 / GRID_SPACING) * GRID_SPACING * 2;
+        width = Math.ceil(width / 2 / GRID_SPACING) * GRID_SPACING * 2;
+        console.log(width, height);
+        console.log(width, height);
+        for(let x = -width / 2; x<=width / 2; x += GRID_SPACING) {
+            for(let z = -height / 2; z <= height / 2; z += GRID_SPACING) {
+                let mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(x, -dist, z);
+                // mesh.add(new THREE.AxisHelper(10));
+                this.scene.add(mesh);
+            }
         }
     }
   }
