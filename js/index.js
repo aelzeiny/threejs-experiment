@@ -1,22 +1,37 @@
 // This is the function that's called when the page first loads
 document.addEventListener("DOMContentLoaded", function() {
     const navs = document.querySelectorAll(".nav-item");
+    const defaultFooter = document.querySelector("#default-footer");
     let activeBlade = null;
+    let activeFooter = defaultFooter;
 
-    const switchView = (nav) => {
+    const switchView = (blade) => {
+        let footerAttr = blade.getAttribute("footer");
+        // footer is equal to current element or default
+        let footer = footerAttr ? document.getElementById(footerAttr) : defaultFooter;
+        // if there is an active blade close it
         if(activeBlade){
             classie.remove(activeBlade, "active");
+            if (activeFooter != footer)
+                classie.remove(footer, "active");
+            // 1.5 seconds later, open the blade
+            if(activeBlade != blade)
+                window.setTimeout(() => switchView(blade, 1500));
             activeBlade = null;
-            window.setTimeout(() => switchView(nav, 1000));
         }
         else {
-            activeBlade = document.getElementById(nav.getAttribute("show-blade"));
+            // Open the blade
+            activeBlade = blade;
             classie.add(activeBlade, "active");
+            classie.add(footer, "active");
         }
     };
 
     for(let i=0;i<navs.length;i++) {
-        navs[i].addEventListener("click", switchView.bind(this, navs[i]));
+        navs[i].addEventListener("click", function() {
+            const blade =  document.getElementById(navs[i].getAttribute("show-blade"));
+            switchView(blade);
+        });
     }
 
     // Create the render window here
@@ -38,7 +53,7 @@ const HORIZONTAL_FOV = 140;
 const STRENGTH = 1;//0.5;//1;
 const CYLINDRICAL_RATIO = 0.25;//0.25;
 
-const BACKGROUND = 0xFFFFFF;//0x0a0a0a;
+const BACKGROUND = 0x0a0a0a;
 
 const GRID_SPACING = 150;
 const GRID_DEPTH = 150;

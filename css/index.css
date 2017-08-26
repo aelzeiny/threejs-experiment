@@ -2,9 +2,19 @@ li {
   padding-left: 0;
 }
 
+h1, h2, h3 {
+  margin: 0px;
+}
+
 body {
   position: relative;
   margin: 0;
   font-family: Open Sans;
   overflow: hidden;
+}
+
+nav, main, figure, footer {
+  position: absolute;
+  width: 100%;
+  margin: 0;
 }

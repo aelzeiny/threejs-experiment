@@ -1,6 +1,6 @@
 .blade {
   color: white;
-  z-index: 1;
+  z-index: 2;
   position: absolute;
   background: url(../assets/dark-triangles.png);
   background-repeat: repeat;
@@ -13,3 +13,21 @@
 .blade.active {
   top: 50px;
 }
+
+footer {
+  position: absolute;
+}
+
+footer .footer{
+  color: white;
+  z-index: 1;
+  position: absolute;
+  transition: top 1s ease;
+  top: 100%;
+}
+footer .footer.active {
+  bottom: 50px;
+}
+
+
+footer
