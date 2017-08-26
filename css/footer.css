@@ -24,7 +24,16 @@ footer .footer.active {
   width: 100%;
   z-index: 2;
 }
-
+.model-link {
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    color: gray;
+    z-index: 2;
+}
+.model-link.active, .model-link:hover {
+    color: white;
+}
 footer .diagonal {
   border-width: 0 0 150px 1920px;
   border-style: solid;

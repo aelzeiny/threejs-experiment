@@ -56,8 +56,14 @@ function initializeView() {
 function initializeModelFooter() {
     const domModels = document.querySelectorAll(".model-link");
     const slider = document.getElementById("footer-slider");
+    let currModel = domModels[0];
     const onFooterClick = function(e) {
-        slider.setAttribute("class", e.currentTarget.getAttribute("slider-pos"));
+        console.log(currModel);
+        classie.remove(slider, currModel.getAttribute("footer-slider"));
+        classie.remove(currModel, "active");
+        currModel = e.currentTarget;
+        slider.setAttribute("class", currModel.getAttribute("slider-pos"));
+        classie.add(currModel, "active");
     }
     for(let i=0;i<domModels.length;i++) {
         let domModel = domModels[i];
