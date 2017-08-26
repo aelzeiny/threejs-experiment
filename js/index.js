@@ -20,7 +20,7 @@ const HORIZONTAL_FOV = 140;
 const STRENGTH = 1;//0.5;//1;
 const CYLINDRICAL_RATIO = 0.25;//0.25;
 
-const BACKGROUND = 0x0a0a0a;
+const BACKGROUND = 0xFFFFFF;//0x0a0a0a;
 
 const GRID_SPACING = 150;
 const GRID_DEPTH = 150;
@@ -85,7 +85,7 @@ class ThreeRenderer {
     // Load in the mesh and add it to the this.scene.
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
     var loader = new THREE.JSONLoader();
-    loader.load( "models/plus_v3.js", (geometry) => {
+    loader.load( "assets/models/plus_v3.js", (geometry) => {
         this.loadMeshes(geometry, material);
     });
     
