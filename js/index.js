@@ -1,17 +1,35 @@
 // This is the function that's called when the page first loads
 document.addEventListener("DOMContentLoaded", function() {
-  console.log("INDEX LOCKED AND LOADED");
-  
-  // Create the render window here
-  const threes = new ThreeRenderer();
-  
-  window.addEventListener('resize', function() { 
-    threes.resize(window.innerWidth, window.innerHeight)
-  });
+    const navs = document.querySelectorAll(".nav-item");
+    let activeBlade = null;
 
-  // Start the animation
-  threes.animate();
+    const switchView = (nav) => {
+        if(activeBlade){
+            classie.remove(activeBlade, "active");
+            activeBlade = null;
+            window.setTimeout(() => switchView(nav, 1000));
+        }
+        else {
+            activeBlade = document.getElementById(nav.getAttribute("show-blade"));
+            classie.add(activeBlade, "active");
+        }
+    };
+
+    for(let i=0;i<navs.length;i++) {
+        navs[i].addEventListener("click", switchView.bind(this, navs[i]));
+    }
+
+    // Create the render window here
+    const threes = new ThreeRenderer();
+
+    window.addEventListener('resize', function() { 
+    threes.resize(window.innerWidth, window.innerHeight)
+    });
+
+    // Start the animation
+    threes.animate();
 });
+
 
 // Hey Cyril, to increase the fisheye effect:
 // (1) Go to this demo page: http://www.decarpentier.nl/downloads/lensdistortion-webgl/lensdistortion-webgl.html

@@ -7,8 +7,8 @@
   background-color: rgba(0,0,0,0.5);
   box-sizing: border-box;
   padding: 15px;
-  top: -100%;
-  transition: top ease-in-out 2s;
+  top: -200px;
+  transition: top 1s ease;
 }
 .blade.active {
   top: 50px;
