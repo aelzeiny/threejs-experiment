@@ -1,0 +1,10 @@
+li {
+  padding-left: 0;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  font-family: Open Sans;
+  overflow: hidden;
+}
