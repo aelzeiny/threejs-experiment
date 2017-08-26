@@ -16,18 +16,16 @@
 
 footer {
   position: absolute;
+  height: 100vh;
 }
 
 footer .footer{
   color: white;
   z-index: 1;
   position: absolute;
-  transition: top 1s ease;
-  top: 100%;
+  transition: bottom 1s ease;
+  bottom: -50px;
 }
 footer .footer.active {
-  bottom: 50px;
+  bottom: 0px;
 }
-
-
-footer

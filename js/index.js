@@ -12,8 +12,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // if there is an active blade close it
         if(activeBlade){
             classie.remove(activeBlade, "active");
-            if (activeFooter != footer)
-                classie.remove(footer, "active");
+            if (activeFooter != footer) {
+                classie.remove(activeFooter, "active");
+            }
             // 1.5 seconds later, open the blade
             if(activeBlade != blade)
                 window.setTimeout(() => switchView(blade, 1500));
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
         else {
             // Open the blade
             activeBlade = blade;
+            activeFooter = footer;
             classie.add(activeBlade, "active");
             classie.add(footer, "active");
         }
