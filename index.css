@@ -27,6 +27,16 @@ nav {
 .nav-item {
     width: calc(100%/8);
     text-align: center;
+    color: gray;
+}
+
+.nav-item.active, .nav-item:hover, #brand{
+  color: white;
+  cursor: pointer;
+}
+
+#brand {
+  cursor: auto;
 }
 
 nav ul {
