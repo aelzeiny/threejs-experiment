@@ -13,19 +13,3 @@
 .blade.active {
   top: 50px;
 }
-
-footer {
-  position: absolute;
-  height: 100vh;
-}
-
-footer .footer{
-  color: white;
-  z-index: 1;
-  position: absolute;
-  transition: bottom 1s ease;
-  bottom: -50px;
-}
-footer .footer.active {
-  bottom: 0px;
-}

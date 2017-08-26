@@ -9,12 +9,12 @@ document.addEventListener("DOMContentLoaded", function() {
         let footerAttr = blade.getAttribute("footer");
         // footer is equal to current element or default
         let footer = footerAttr ? document.getElementById(footerAttr) : defaultFooter;
+        if (activeFooter != footer) {
+            classie.remove(activeFooter, "active");
+        }
         // if there is an active blade close it
         if(activeBlade){
             classie.remove(activeBlade, "active");
-            if (activeFooter != footer) {
-                classie.remove(activeFooter, "active");
-            }
             // 1.5 seconds later, open the blade
             if(activeBlade != blade)
                 window.setTimeout(() => switchView(blade, 1500));
