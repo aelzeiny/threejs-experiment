@@ -1,5 +1,19 @@
 // This is the function that's called when the page first loads
 document.addEventListener("DOMContentLoaded", function() {
+    initializeView();
+
+    // Create the render window here
+    const threes = new ThreeRenderer();
+
+    window.addEventListener('resize', function() { 
+    threes.resize(window.innerWidth, window.innerHeight)
+    });
+
+    // Start the animation
+    threes.animate();
+});
+
+function initializeView() {
     const navs = document.querySelectorAll(".nav-item");
     const defaultFooter = document.querySelector("#default-footer");
     let activeBlade = null;
@@ -35,18 +49,21 @@ document.addEventListener("DOMContentLoaded", function() {
             switchView(blade);
         });
     }
+    
+    initializeModelFooter();
+}
 
-    // Create the render window here
-    const threes = new ThreeRenderer();
-
-    window.addEventListener('resize', function() { 
-    threes.resize(window.innerWidth, window.innerHeight)
-    });
-
-    // Start the animation
-    threes.animate();
-});
-
+function initializeModelFooter() {
+    const domModels = document.querySelectorAll(".model-link");
+    const slider = document.getElementById("footer-slider");
+    const onFooterClick = function(e) {
+        slider.setAttribute("class", e.currentTarget.getAttribute("slider-pos"));
+    }
+    for(let i=0;i<domModels.length;i++) {
+        let domModel = domModels[i];
+        domModel.addEventListener("click", onFooterClick);
+    }
+}
 
 // Hey Cyril, to increase the fisheye effect:
 // (1) Go to this demo page: http://www.decarpentier.nl/downloads/lensdistortion-webgl/lensdistortion-webgl.html
