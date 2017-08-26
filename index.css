@@ -1,7 +1,48 @@
-
+li {
+  padding-left: 0;
+}
 body {
   position: relative;
   margin: 0;
+  font-family: Open Sans;
+  overflow: hidden;
+}
+
+nav {
+  color: white;
+  z-index: 1;
+  position: fixed;
+  
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  height: 50px;
+  align-items: center;
+
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
+
+.nav-item {
+    width: calc(100%/8);
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding-left: 0;
+    display: inline-flex;
+    justify-content: space-around;
+    width: 50%;
+    margin: 0;
+    float: left;
+}
+
+main {
+  z-index: 0;
+  height: 100vh;
+  position: absolute;
 }
 
 #gradient {
@@ -24,4 +65,8 @@ body {
   background: -webkit-radial-gradient(center, ellipse cover, rgba(255,255,255,0) 0%,rgba(0,0,0,1) 70%); /* Chrome10-25,Safari5.1-6 */
   background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(0,0,0,1) 70%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+#viewport {
+  height: 100vh;
 }

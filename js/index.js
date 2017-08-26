@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
 // (1) Go to this demo page: http://www.decarpentier.nl/downloads/lensdistortion-webgl/lensdistortion-webgl.html
 // (2) Plug the numbers in order: HORIZONTAL_FOV, strength, cylindricalRatio
 const HORIZONTAL_FOV = 140;
-const STRENGTH = 0.5;//1;
+const STRENGTH = 1;//0.5;//1;
 const CYLINDRICAL_RATIO = 0.25;//0.25;
 
 const BACKGROUND = 0x0a0a0a;
@@ -36,8 +36,8 @@ class ThreeRenderer {
     this.animate = this.animate.bind(this);
 
     this.scene = new THREE.Scene();
-    var WIDTH = window.innerWidth - 10,
-        HEIGHT = window.innerHeight - 50;
+    var WIDTH = window.innerWidth,
+        HEIGHT = window.innerHeight;
 
     // Create a this.renderer and add it to the DOM.
     this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -90,7 +90,6 @@ class ThreeRenderer {
     });
     
     // Add OrbitControls so that we can pan around with the mouse.
-    this.scene.add(this.camera);
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
   } 
 
