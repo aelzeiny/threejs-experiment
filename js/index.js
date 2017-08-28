@@ -76,15 +76,15 @@ function initializeModelFooter() {
 // (2) Plug the numbers in order: HORIZONTAL_FOV, strength, cylindricalRatio
 const HORIZONTAL_FOV = 140;
 const STRENGTH = 1;//0.5;//1;
-const CYLINDRICAL_RATIO = 0.25;//0.25;
+const CYLINDRICAL_RATIO = 1.25;//0.25;
 
 const BACKGROUND = 0x0a0a0a;
 
-const GRID_SPACING = 150;
-const GRID_DEPTH = 150;
-const CAMERA_DISTANCE = 200; // camera distance from axis
+const GRID_SPACING = 120;
+const GRID_DEPTH = 25;
+const CAMERA_DISTANCE = 150; // camera distance from axis
 const LAYERS = 3; // number of cross layers
-const VELO = -2; // Pixel movement per frame
+const VELO = -0.25; // Pixel movement per frame
 
 // This class is responsible for rendering everything
 // FishEYE Source: https://stackoverflow.com/questions/13360625/
@@ -143,7 +143,7 @@ class ThreeRenderer {
     // Load in the mesh and add it to the this.scene.
     let material = new THREE.MeshLambertMaterial({color: 0x999999});
     var loader = new THREE.JSONLoader();
-    loader.load( "assets/models/plus_v3.js", (geometry) => {
+    loader.load( "assets/models/plus_v4.js", (geometry) => {
         this.loadMeshes(geometry, material);
     });
     
