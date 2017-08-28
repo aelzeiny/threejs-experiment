@@ -13,3 +13,7 @@
 .blade.active {
   top: 50px;
 }
+
+.blade-hidden {
+  visibility: hidden;
+}

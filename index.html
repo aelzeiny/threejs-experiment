@@ -49,15 +49,11 @@
         <h2>GET IN TOUCH</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis neque augue, egestas vel bibendum a, auctor quis magna. Curabitur ullamcorper felis quis porttitor malesuada. Mauris congue porta cursus. Donec vel rutrum sem, tincidunt vulputate turpis. Vivamus vel leo dui. Vestibulum non mattis turpis, id cursus ipsum. Pellentesque fringilla enim ut tempus hendrerit. Curabitur egestas diam quis erat molestie, ac mattis ipsum tempor. Sed quis quam in orci malesuada dapibus. Duis ullamcorper interdum ante sed laoreet. Maecenas malesuada efficitur sollicitudin.</p>
       </section>
-      <section class="blade" footer="model-footer" id="models">
-        <!--<h2>Models</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis neque augue, egestas vel bibendum a, auctor quis magna. Curabitur ullamcorper felis quis porttitor malesuada. Mauris congue porta cursus. Donec vel rutrum sem, tincidunt vulputate turpis. Vivamus vel leo dui. Vestibulum non mattis turpis, id cursus ipsum. Pellentesque fringilla enim ut tempus hendrerit. Curabitur egestas diam quis erat molestie, ac mattis ipsum tempor. Sed quis quam in orci malesuada dapibus. Duis ullamcorper interdum ante sed laoreet. Maecenas malesuada efficitur sollicitudin.</p>-->
-      </section>
+      <section class="blade blade-hidden" footer="model-footer" id="models"></section>
     </main>
     <figure>
       <!-- <div id="gradient"></div> -->
-      <div id="viewport" class="active"><!--THREE JS DIV --></div>
-      <div class="model-cover" id="model-1">
+      <div class="model-cover active" id="model-1">
         <h3>Model 1</h3>
         <p>Put whatever you want here</p>
         <img src="./assets/covers/backgroundScene1HD.jpg"></img>
@@ -68,7 +64,6 @@
         <p>However you like this to look</p>
         <img src="./assets/covers/backgroundScene2HD.jpg"></img>
         <button class="model-view" model="">view</button>
-        <a class="btn-1" href="#">Diagonal Swipe</a>
       </div>
       <div class="model-cover" id="model-3">
         <h3>Model 3</h3>
@@ -112,12 +107,13 @@
         <img src="./assets/covers/backgroundScene9HD.jpg"></img>
         <button class="model-view" model="">view</button>
       </div>
+      <div id="viewport" class="active"><!--THREE JS DIV --></div>
     </figure>
     <footer>
       <section class="footer active" id="default-footer"><h4>#Drag mouse for effect</h4></section>
       <section class="footer" id="model-footer">
         <ul>
-          <li class="model-link" slider-pos="pos1" model-cover="model-1">Model.1</li>
+          <li class="model-link active" slider-pos="pos1" model-cover="model-1">Model.1</li>
           <li class="model-link" slider-pos="pos2" model-cover="model-2">Model.2</li>
           <li class="model-link" slider-pos="pos3" model-cover="model-3">Model.3</li>
           <li class="model-link" slider-pos="pos4" model-cover="model-4">Model.4</li>
@@ -127,7 +123,7 @@
           <li class="model-link" slider-pos="pos8" model-cover="model-8">Model.8</li>
           <li class="model-link" slider-pos="pos9" model-cover="model-9">Model.9</li>
         </ul>
-        <div id="footer-slider" class="pos0"></div>
+        <div id="footer-slider" class="pos1"></div>
       </section>
       <div class="diagonal"></div>
     </footer>
