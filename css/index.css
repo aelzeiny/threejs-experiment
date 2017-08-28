@@ -23,6 +23,7 @@ body {
   margin: 0;
   font-family: Open Sans;
   overflow: hidden;
+  background-color: black;
 }
 
 nav, main, figure, footer {

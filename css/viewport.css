@@ -27,6 +27,30 @@ figure {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
-#viewport {
+#viewport, .model-cover {
   height: 100vh;
+  width: 100%;
+  opacity: 0;
+  transition: opacity ease 1s;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  visibility: hidden;
+}
+
+#viewport.active, .model-cover.active{
+  opacity: 1;
+  visibility: visible;
+}
+
+.model-cover {
+  color: red;
+}
+
+.model-cover img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: -1;
 }

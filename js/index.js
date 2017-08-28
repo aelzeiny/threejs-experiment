@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const threes = new ThreeRenderer();
 
     window.addEventListener('resize', function() { 
-    threes.resize(window.innerWidth, window.innerHeight)
+        threes.resize(window.innerWidth, window.innerHeight)
     });
 
     // Start the animation
@@ -16,14 +16,25 @@ document.addEventListener("DOMContentLoaded", function() {
 function initializeView() {
     const navs = document.querySelectorAll(".nav-item");
     const defaultFooter = document.querySelector("#default-footer");
+    const modelFooter = document.querySelector("#model-footer");
+    const viewport = document.getElementById("viewport");
     let activeBlade = null;
     let activeFooter = defaultFooter;
+
+    const modelFooterFade = (fadeIn) => {
+        if(fadeIn)
+            classie.remove(viewport, "active");
+        else
+            classie.add(viewport, "active");
+    };
 
     const switchView = (blade) => {
         let footerAttr = blade.getAttribute("footer");
         // footer is equal to current element or default
         let footer = footerAttr ? document.getElementById(footerAttr) : defaultFooter;
         if (activeFooter != footer) {
+            if (activeFooter == modelFooter)
+                modelFooterFade(false);
             classie.remove(activeFooter, "active");
         }
         // if there is an active blade close it
@@ -38,6 +49,8 @@ function initializeView() {
             // Open the blade
             activeBlade = blade;
             activeFooter = footer;
+            if(activeFooter == modelFooter)
+                modelFooterFade(true);
             classie.add(activeBlade, "active");
             classie.add(footer, "active");
         }
@@ -51,23 +64,36 @@ function initializeView() {
     }
     
     initializeModelFooter();
+    initializeModelCovers();
+}
+
+function initializeModelCovers() {
+
 }
 
 function initializeModelFooter() {
-    const domModels = document.querySelectorAll(".model-link");
+    const links = document.querySelectorAll(".model-link");
     const slider = document.getElementById("footer-slider");
-    let currModel = domModels[0];
+    let currLink = links[0];
+    let currCover = null;
     const onFooterClick = function(e) {
-        console.log(currModel);
-        classie.remove(slider, currModel.getAttribute("footer-slider"));
-        classie.remove(currModel, "active");
-        currModel = e.currentTarget;
-        slider.setAttribute("class", currModel.getAttribute("slider-pos"));
-        classie.add(currModel, "active");
+        // Remove old state from footer
+        classie.remove(slider, currLink.getAttribute("footer-slider"));
+        classie.remove(currLink, "active");
+        currLink = e.currentTarget;
+        // Set new state in footer
+        slider.setAttribute("class", currLink.getAttribute("slider-pos"));
+        classie.add(currLink, "active");
+        // deactivate old cover
+        if (currCover)
+            classie.remove(currCover, "active");
+        currCover = document.getElementById(currLink.getAttribute("model-cover"));
+        console.log(currCover);
+        classie.add(currCover, "active");
     }
-    for(let i=0;i<domModels.length;i++) {
-        let domModel = domModels[i];
-        domModel.addEventListener("click", onFooterClick);
+    for(let i=0;i<links.length;i++) {
+        let link = links[i];
+        link.addEventListener("click", onFooterClick);
     }
 }
 
