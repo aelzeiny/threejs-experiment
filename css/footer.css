@@ -23,6 +23,8 @@ footer .footer.active {
   justify-content: space-around;
   width: 100%;
   z-index: 2;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 .model-link {
     width: 100%;

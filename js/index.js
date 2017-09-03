@@ -1,9 +1,10 @@
 // This is the function that's called when the page first loads
 document.addEventListener("DOMContentLoaded", function() {
-    initializeView();
 
     // Create the render window here
     const threes = new ThreeRenderer();
+    
+    initializeView(threes);
 
     window.addEventListener('resize', function() { 
         threes.resize(window.innerWidth, window.innerHeight)
@@ -13,19 +14,18 @@ document.addEventListener("DOMContentLoaded", function() {
     threes.animate();
 });
 
-function initializeView() {
+function initializeView(threes) {
     const navs = document.querySelectorAll(".nav-item");
     const defaultFooter = document.querySelector("#default-footer");
     const modelFooter = document.querySelector("#model-footer");
-    const viewport = document.getElementById("viewport");
     let activeBlade = null;
     let activeFooter = defaultFooter;
 
     const modelFooterFade = (fadeIn) => {
         if(fadeIn)
-            classie.remove(viewport, "active");
+            classie.remove(threes.viewport, "active");
         else
-            classie.add(viewport, "active");
+            classie.add(threes.viewport, "active");
     };
 
     const switchView = (blade) => {
@@ -63,20 +63,28 @@ function initializeView() {
         });
     }
     
-    initializeModelFooter();
-    initializeModelCovers();
+    initializeModelFooter(modelFooterFade);
+    initializeModelCovers(threes);
 }
 
-function initializeModelCovers() {
-
+function initializeModelCovers(threes) {
+    const viewButtons = document.querySelectorAll(".model-view");
+    const viewModel = (e) => {
+        const modelName = e.currentTarget.getAttribute("model");
+        classie.add(threes.viewport, "active");
+        threes.setModel(`assets/models/${modelName}`);
+    };
+    for(let i=0;i<viewButtons.length;i++)
+        viewButtons[i].addEventListener("click", viewModel);
 }
 
-function initializeModelFooter() {
+function initializeModelFooter(modelFooterFade) {
     const links = document.querySelectorAll(".model-link");
     const slider = document.getElementById("footer-slider");
     let currLink = links[0];
-    let currCover = null;
+    let currCover = document.getElementById("model-1");
     const onFooterClick = function(e) {
+        modelFooterFade(true);
         // Remove old state from footer
         classie.remove(slider, currLink.getAttribute("footer-slider"));
         classie.remove(currLink, "active");
@@ -88,7 +96,6 @@ function initializeModelFooter() {
         if (currCover)
             classie.remove(currCover, "active");
         currCover = document.getElementById(currLink.getAttribute("model-cover"));
-        console.log(currCover);
         classie.add(currCover, "active");
     }
     for(let i=0;i<links.length;i++) {
@@ -126,7 +133,8 @@ class ThreeRenderer {
     // Create a this.renderer and add it to the DOM.
     this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize(WIDTH, HEIGHT);
-    document.getElementById("viewport").appendChild(this.renderer.domElement);
+    this.viewport = document.getElementById("viewport");
+    this.viewport.appendChild(this.renderer.domElement);
 
     // Create a this.camera, zoom it out from the model a bit, and add it to the this.scene.
     this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, CAMERA_DISTANCE + GRID_DEPTH + 1000);
@@ -162,19 +170,23 @@ class ThreeRenderer {
     light.position.set(0, CAMERA_DISTANCE, 0);
     this.scene.add(light);
 
-    // var ambiColor = "#000";
+    // var ambiColor = "#FFF";
     // var ambientLight = new THREE.AmbientLight(ambiColor);
     // this.scene.add(ambientLight);
 
     // Load in the mesh and add it to the this.scene.
-    let material = new THREE.MeshLambertMaterial({color: 0x999999});
+    this.plusMaterial = new THREE.MeshLambertMaterial({color: 0x999999});
     var loader = new THREE.JSONLoader();
     loader.load( "assets/models/plus_v4.js", (geometry) => {
-        this.loadMeshes(geometry, material);
+        this.loadMeshes(geometry, this.plusMaterial);
     });
+    this.modelMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
     
     // Add OrbitControls so that we can pan around with the mouse.
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.autoRotate = true;
+    this.controls.enableZoom = false;
+    
   } 
 
   loadMeshes(geometry, material) {
@@ -205,6 +217,12 @@ class ThreeRenderer {
     this.camera.updateProjectionMatrix();
   }
 
+  clearScene() {
+        for( var i = this.scene.children.length - 0; i >= 1; i--) {
+            var obj = this.scene.children[i];
+            this.scene.remove(obj);
+        }
+    }
 
   // Renders the this.scene and updates the render as needed.
   animate() {
@@ -231,6 +249,36 @@ class ThreeRenderer {
     // Render the this.scene.
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
+  }
+
+  setModel(assetName) {
+      this.clearScene();
+      var loader = new THREE.JSONLoader();
+      const SCALE = 10;
+      loader.load(`assets/models/monkey_sample.js`, (geometry) => {
+        let mesh = new THREE.Mesh(geometry, this.modelMaterial);
+        this.scene.add(mesh);
+        mesh.scale.x = SCALE;
+        mesh.scale.y = SCALE;
+        mesh.scale.z = SCALE;
+        
+        geometry.computeBoundingSphere();
+        let radius = geometry.boundingSphere.radius;
+        let distanceFactor = Math.abs( this.camera.aspect * radius / Math.sin( this.camera.fov / 2 )) * SCALE;
+        
+        this.camera.position.set(0, 0, distanceFactor / 4);
+        this.camera.up.set(0, 1, 0);
+        
+        // Create a light, set its position, and add it to the this.scene.
+        var light = new THREE.PointLight(0xffffff);
+        light.position.set(0, 0, 100);
+        this.scene.add(light);
+        
+        var ambientLight = new THREE.AmbientLight("darkgoldenrod");
+        this.scene.add(ambientLight);
+
+        this.camera.updateProjectionMatrix();
+      });
   }
 }
 
