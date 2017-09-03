@@ -112,6 +112,8 @@ const STRENGTH = 1;//0.5;//1;
 const CYLINDRICAL_RATIO = 1.25;//0.25;
 
 const BACKGROUND = 0x0a0a0a;
+const AMBIENT = "darkgoldenrod";
+const SPOTLIGHT = 0xffffff;
 
 const GRID_SPACING = 120;
 const GRID_DEPTH = 25;
@@ -264,17 +266,17 @@ class ThreeRenderer {
         
         geometry.computeBoundingSphere();
         let radius = geometry.boundingSphere.radius;
-        let distanceFactor = Math.abs( this.camera.aspect * radius / Math.sin( this.camera.fov / 2 )) * SCALE;
+        let distanceFactor = Math.abs( this.camera.aspect * radius / Math.sin( this.camera.fov / 2 )) * SCALE / 4;
         
-        this.camera.position.set(0, 0, distanceFactor / 4);
+        this.camera.position.set(0, 0, distanceFactor);
         this.camera.up.set(0, 1, 0);
         
         // Create a light, set its position, and add it to the this.scene.
-        var light = new THREE.PointLight(0xffffff);
-        light.position.set(0, 0, 100);
+        var light = new THREE.PointLight(SPOTLIGHT);
+        light.position.set(0, 0, distanceFactor);
         this.scene.add(light);
         
-        var ambientLight = new THREE.AmbientLight("darkgoldenrod");
+        var ambientLight = new THREE.AmbientLight(AMBIENT);
         this.scene.add(ambientLight);
 
         this.camera.updateProjectionMatrix();
