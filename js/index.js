@@ -120,7 +120,7 @@ const GRID_SPACING = 120;
 const GRID_DEPTH = 25;
 const CAMERA_DISTANCE = 150; // camera distance from axis
 const LAYERS = 3; // number of cross layers
-const VELO = -0.25; // Pixel movement per frame
+const VELO = 1; // Pixel movement per frame
 
 // This class is responsible for rendering everything
 // FishEYE Source: https://stackoverflow.com/questions/13360625/
@@ -190,11 +190,12 @@ class ThreeRenderer {
         this.loadMeshes(geometry, this.plusMaterial);
     });
     this.homeActive = true;
+    this.velo = [VELO, 0];
     this.modelMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
     
     // Add OrbitControls so that we can pan around with the mouse.
-    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
     // Disable user input
+    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
     this.controls.userPan = this.controls.userRotate = this.controls.userZoom = false;
   } 
 
@@ -207,10 +208,18 @@ class ThreeRenderer {
   }
 
   mouseDrag(e) {
-      if(this.dragging && !this.homeActive) {
-          let delta = Math.PI / 180 * ROTATE_VELO * e.movementX;
-          this.controls.rotateLeft(delta);
-      }
+    if(this.homeActive) {
+        let cw = this.renderer.domElement.width / 2;
+        let ch = this.renderer.domElement.height / 2;
+        let dw = cw - e.offsetX;
+        let dh = ch - e.offsetY;
+        let length = Math.sqrt(dw * dw + dh * dh);
+        this.velo = [dw / length * VELO, dh / length * VELO];
+    }
+    else if(this.dragging) {
+        let delta = Math.PI / 180 * ROTATE_VELO * e.movementX;
+        this.controls.rotateLeft(delta);
+    }
   }
 
 
@@ -258,15 +267,22 @@ class ThreeRenderer {
         for(let i = 0; i < this.meshes.length; i++) {
             let mesh = this.meshes[i];
             
-            const boundedHeight = 2 * Math.tan( vFOV / 2 ) * (mesh.dist + CAMERA_DISTANCE);
+            let boundedHeight = 2 * Math.tan( vFOV / 2 ) * (mesh.dist + CAMERA_DISTANCE);
             const boundedWidth = (this.camera.aspect * boundedHeight) / 2;
+            boundedHeight /= 2;
             let width = Math.ceil(boundedWidth / 2 / GRID_SPACING) * GRID_SPACING * 2;
-            let newX = mesh.position.x + VELO;
-            if(VELO > 0 && newX > width)
+            let height = Math.ceil(boundedHeight / 2 / GRID_SPACING) * GRID_SPACING * 2;
+            let newX = mesh.position.x + this.velo[0];
+            let newY = mesh.position.z + this.velo[1];
+            if(this.velo[0] > 0 && newX > width)
                 newX -= width * 2;
-            else if(VELO < 0 && newX < -width)
+            else if(this.velo[0] < 0 && newX < -width)
                 newX += width * 2;
-            mesh.position.set(newX, mesh.position.y, mesh.position.z);
+            if(this.velo[1] > 0 && newY > height)
+                newY -= height * 2;
+            if(this.velo[1] < 0 && newY < -height)
+                newY += height * 2;
+            mesh.position.set(newX, mesh.position.y, newY);
         }
     }
     
