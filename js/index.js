@@ -113,7 +113,7 @@ const CYLINDRICAL_RATIO = 1.25;//0.25;
 const ROTATE_VELO = 0.5;
 
 const BACKGROUND = 0x0a0a0a;
-const AMBIENT = "darkgoldenrod";
+const AMBIENT = "red";
 const SPOTLIGHT = 0xffffff;
 
 const GRID_SPACING = 120;
@@ -178,6 +178,7 @@ class ThreeRenderer {
     var light = new THREE.PointLight(0xffffff);
     light.position.set(0, CAMERA_DISTANCE, 0);
     this.scene.add(light);
+    this.sceneLight = light;
 
     // var ambiColor = "#FFF";
     // var ambientLight = new THREE.AmbientLight(ambiColor);
@@ -219,7 +220,6 @@ class ThreeRenderer {
     else if(this.dragging) {
         let delta = Math.PI / 180 * ROTATE_VELO * e.movementX;
         this.controls.rotateLeft(delta);
-        this.sceneLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
     }
   }
 
@@ -254,7 +254,8 @@ class ThreeRenderer {
   clearScene() {
         for( var i = this.scene.children.length - 0; i >= 1; i--) {
             var obj = this.scene.children[i];
-            this.scene.remove(obj);
+            if(obj != this.sceneLight)
+                this.scene.remove(obj);
         }
     }
 
@@ -286,12 +287,11 @@ class ThreeRenderer {
             mesh.position.set(newX, mesh.position.y, newY);
         }
     }
+    this.sceneLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
     
     // Render the this.scene.
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
-    if(this.sceneLight)
-        this.sceneLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
   }
 
   setModel(assetName) {
@@ -313,12 +313,6 @@ class ThreeRenderer {
         
         this.camera.position.set(0, 0, distanceFactor);
         this.camera.up.set(0, 1, 0);
-        
-        // Create a light, set its position, and add it to the this.scene.
-        var light = new THREE.PointLight(SPOTLIGHT);
-        light.position.set(0, 0, distanceFactor);
-        this.scene.add(light);
-        this.sceneLight = light;
         
         var ambientLight = new THREE.AmbientLight(AMBIENT);
         this.scene.add(ambientLight);
