@@ -194,9 +194,8 @@ class ThreeRenderer {
     
     // Add OrbitControls so that we can pan around with the mouse.
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-    // this.controls.autoRotate = true;
-    // this.controls.enableZoom = false;
-    console.log(this.controls);
+    // Disable user input
+    this.controls.userPan = this.controls.userRotate = this.controls.userZoom = false;
   } 
 
   mouseUp(e) {
@@ -279,6 +278,7 @@ class ThreeRenderer {
   setModel(assetName) {
       this.clearScene();
       this.homeActive = false;
+      this.controls.autoRotate = true;
       var loader = new THREE.JSONLoader();
       const SCALE = 10;
       loader.load(`assets/models/monkey_sample.js`, (geometry) => {
@@ -299,7 +299,6 @@ class ThreeRenderer {
         var light = new THREE.PointLight(SPOTLIGHT);
         light.position.set(0, 0, distanceFactor);
         this.scene.add(light);
-        mesh.add(new THREE.AxisHelper(10));
         
         var ambientLight = new THREE.AmbientLight(AMBIENT);
         this.scene.add(ambientLight);
@@ -307,6 +306,17 @@ class ThreeRenderer {
         this.camera.updateProjectionMatrix();
         this.activeMesh = mesh;
       });
+  }
+
+  resetSplash() {
+    this.clearScene();
+    this.controls.autoRotate = false;
+    for(let i=0;i<this.meshes.length;i++)
+        this.scene.add(meshes[i]);
+    this.homeActive = true;
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(0, CAMERA_DISTANCE, 0);
+    this.scene.add(light);
   }
 }
 
