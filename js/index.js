@@ -219,6 +219,7 @@ class ThreeRenderer {
     else if(this.dragging) {
         let delta = Math.PI / 180 * ROTATE_VELO * e.movementX;
         this.controls.rotateLeft(delta);
+        this.sceneLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
     }
   }
 
@@ -289,6 +290,8 @@ class ThreeRenderer {
     // Render the this.scene.
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
+    if(this.sceneLight)
+        this.sceneLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
   }
 
   setModel(assetName) {
@@ -315,6 +318,7 @@ class ThreeRenderer {
         var light = new THREE.PointLight(SPOTLIGHT);
         light.position.set(0, 0, distanceFactor);
         this.scene.add(light);
+        this.sceneLight = light;
         
         var ambientLight = new THREE.AmbientLight(AMBIENT);
         this.scene.add(ambientLight);
