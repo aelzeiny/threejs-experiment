@@ -110,6 +110,7 @@ function initializeModelFooter(modelFooterFade) {
 const HORIZONTAL_FOV = 140;
 const STRENGTH = 1;//0.5;//1;
 const CYLINDRICAL_RATIO = 1.25;//0.25;
+const ROTATE_VELO = 0.5;
 
 const BACKGROUND = 0x0a0a0a;
 const AMBIENT = "darkgoldenrod";
@@ -137,6 +138,12 @@ class ThreeRenderer {
     this.renderer.setSize(WIDTH, HEIGHT);
     this.viewport = document.getElementById("viewport");
     this.viewport.appendChild(this.renderer.domElement);
+
+    // Mouse dragging controls
+    this.renderer.domElement.addEventListener("mousedown", this.mouseDown.bind(this));
+    this.renderer.domElement.addEventListener("mouseup", this.mouseUp.bind(this));
+    this.renderer.domElement.addEventListener("mousemove", this.mouseDrag.bind(this));
+    this.dragging = false;
 
     // Create a this.camera, zoom it out from the model a bit, and add it to the this.scene.
     this.camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 1, CAMERA_DISTANCE + GRID_DEPTH + 1000);
@@ -182,14 +189,31 @@ class ThreeRenderer {
     loader.load( "assets/models/plus_v4.js", (geometry) => {
         this.loadMeshes(geometry, this.plusMaterial);
     });
+    this.homeActive = true;
     this.modelMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
     
     // Add OrbitControls so that we can pan around with the mouse.
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.autoRotate = true;
-    this.controls.enableZoom = false;
-    
+    // this.controls.autoRotate = true;
+    // this.controls.enableZoom = false;
+    console.log(this.controls);
   } 
+
+  mouseUp(e) {
+    this.dragging = false;
+  }
+
+  mouseDown(e) {
+    this.dragging = true;
+  }
+
+  mouseDrag(e) {
+      if(this.dragging && !this.homeActive) {
+          let delta = Math.PI / 180 * ROTATE_VELO * e.movementX;
+          this.controls.rotateLeft(delta);
+      }
+  }
+
 
   loadMeshes(geometry, material) {
     this.meshes = [];
@@ -205,7 +229,6 @@ class ThreeRenderer {
                 let mesh = new THREE.Mesh(geometry, material);
                 mesh.position.set(x, -dist, z + GRID_SPACING / 2);
                 mesh.dist = dist;
-                // mesh.add(new THREE.AxisHelper(10));
                 this.meshes.push(mesh);
                 this.scene.add(mesh);
             }
@@ -255,6 +278,7 @@ class ThreeRenderer {
 
   setModel(assetName) {
       this.clearScene();
+      this.homeActive = false;
       var loader = new THREE.JSONLoader();
       const SCALE = 10;
       loader.load(`assets/models/monkey_sample.js`, (geometry) => {
@@ -275,11 +299,13 @@ class ThreeRenderer {
         var light = new THREE.PointLight(SPOTLIGHT);
         light.position.set(0, 0, distanceFactor);
         this.scene.add(light);
+        mesh.add(new THREE.AxisHelper(10));
         
         var ambientLight = new THREE.AmbientLight(AMBIENT);
         this.scene.add(ambientLight);
 
         this.camera.updateProjectionMatrix();
+        this.activeMesh = mesh;
       });
   }
 }
